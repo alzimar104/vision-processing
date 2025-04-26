@@ -30,7 +30,7 @@ async def tahmin_et(file: UploadFile = File(...)):
         results = decode_predictions(preds, top=3)[0]
 
         tahminler = [
-            {"etiket": etiket, "isim": isim, "olasılık": float(f"{oran*100:.2f}")}
+            {"etiket": etiket, "isim": etiket, "olasılık": float(f"{oran*100:.2f}")}
             for (_, etiket, oran) in results
         ]
 
@@ -38,3 +38,4 @@ async def tahmin_et(file: UploadFile = File(...)):
     
     except Exception as e:
         return JSONResponse(content={"hata": str(e)}, status_code=500)
+
