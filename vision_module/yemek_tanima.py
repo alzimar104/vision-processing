@@ -7,8 +7,9 @@ from tensorflow.keras.applications.resnet50 import preprocess_input, decode_pred
 from tensorflow.keras.preprocessing import image
 import io
 from PIL import Image
+from fastapi import APIRouter
 
-app = FastAPI()
+router = APIRouter(tags=["Vision"])
 
 # Model yükleniyor
 model = ResNet50(weights='imagenet')
@@ -21,7 +22,7 @@ def preprocess_image(file) -> np.ndarray:
     x = preprocess_input(x)
     return x
 
-@app.post("/tahmin")
+@router.post("/tahmin")
 async def tahmin_et(file: UploadFile = File(...)):
     try:
         contents = await file.read()
@@ -39,3 +40,11 @@ async def tahmin_et(file: UploadFile = File(...)):
     except Exception as e:
         return JSONResponse(content={"hata": str(e)}, status_code=500)
 
+# Eğer bu dosya doğrudan çalıştırılırsa
+if __name__ == "__main__":
+    # Sadece test amaçlı basit bir FastAPI uygulaması
+    app = FastAPI()
+    app.include_router(router)
+    
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
